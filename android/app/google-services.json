@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "142716240312",
+    "project_id": "fypdestination",
+    "storage_bucket": "fypdestination.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142716240312:android:f268c0e634118c7b418f4d",
+        "android_client_info": {
+          "package_name": "com.prajwal.destination"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "142716240312-0jide0rei7nkhdm9l02bmu5v28lh2kug.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYdTBJfP7grUYtzXI98qXlyjuXge3geaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "142716240312-0jide0rei7nkhdm9l02bmu5v28lh2kug.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
