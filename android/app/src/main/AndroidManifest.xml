@@ -1,12 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-<!--Permission-->
-<uses-permission android:name = "android.permission.CAMERA" />
+    <!--Permission-->
+    <uses-permission android:name = "android.permission.CAMERA" />
     <application
         android:label="destination"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
+            android:enableOnBackInvokedCallback="true"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

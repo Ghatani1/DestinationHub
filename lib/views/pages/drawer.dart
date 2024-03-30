@@ -3,8 +3,10 @@ import 'package:destination/global_variables.dart';
 
 import 'package:destination/utils/colors.dart';
 import 'package:destination/shared_preferences/SharedPref.dart';
+import 'package:destination/views/pages/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DrawerTab extends StatefulWidget {
   const DrawerTab({super.key});
@@ -100,47 +102,45 @@ class _DrawerTabState extends State<DrawerTab> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.lightBlue,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.verified_user),
-                      title: const Text('Profile'),
-                      iconColor: kSecondary,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/Profile');
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.password),
-                      iconColor: kSecondary,
-                      title: const Text('Change Password'),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/ChangePassword');
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.place),
-                      iconColor: kSecondary,
-                      title: const Text('My Places'),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/MyPlaces');
-                      },
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          leading: const Icon(Icons.person),
+                          title: const Text('Profile',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          iconColor: kSecondary,
+                          onTap: () {
+                            Get.to(() => const Profile());
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          leading: const Icon(Icons.place),
+                          iconColor: kSecondary,
+                          title: const Text('My Places',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          onTap: () {
+                            Get.toNamed('/MyPlaces');
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -150,7 +150,7 @@ class _DrawerTabState extends State<DrawerTab> {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.logout),
-                      iconColor: kPrimary,
+                      iconColor: Colors.red,
                       title: const Text('Log Out'),
                       onTap: () {
                         _logOut();

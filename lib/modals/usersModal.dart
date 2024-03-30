@@ -5,20 +5,33 @@ class UserModal {
   String? lastName;
   String? email;
   String? phoneNumber;
+  String? profileUrl;
 
   UserModal({
     this.firstName,
     this.lastName,
     this.email,
     this.phoneNumber,
+    this.profileUrl,
   });
 
-  UserModal fromJson(Map<String, dynamic> json) {
+  Map<String, dynamic> toJson() {
+    return {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'profileUrl': profileUrl,
+    };
+  }
+
+  factory UserModal.fromJson(Map<String, dynamic> json) {
     return UserModal(
       firstName: json['firstName'],
       lastName: json['lastName'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
+      profileUrl: json['profileUrl'],
     );
   }
 }

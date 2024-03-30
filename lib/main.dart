@@ -27,7 +27,7 @@ void main() async {
       NotificationChannel(
         channelKey: 'added_event',
         channelName: 'Added Event Notification',
-        channelDescription: 'Added Notification channel For tests',
+        channelDescription: 'Added Notification',
         playSound: true,
         enableVibration: true,
         defaultColor: kSecondary,
@@ -40,6 +40,14 @@ void main() async {
         enableVibration: true,
         defaultColor: kSecondary,
       ),
+      NotificationChannel(
+          channelKey: 'own_reminder',
+          channelName: 'Personal Reminder',
+          channelDescription: 'Remind About Your Event',
+          playSound: true,
+          enableVibration: true,
+          defaultColor: kPrimary,
+          ledColor: kWhite)
     ],
   );
   Get.put(NavBarController());

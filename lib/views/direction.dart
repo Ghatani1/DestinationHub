@@ -1,4 +1,3 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 
 class Direction extends StatefulWidget {
@@ -9,15 +8,6 @@ class Direction extends StatefulWidget {
 }
 
 class _DirectionState extends State<Direction> {
-  void showNotification() {
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 1,
-            channelKey: 'basic_channel',
-            title: 'Event List',
-            body: 'Finally Its Working'));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

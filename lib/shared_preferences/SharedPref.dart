@@ -30,4 +30,15 @@ class SharedPref {
     prefs.remove('phoneNumber');
     prefs.remove('userId');
   }
+
+  Future<void> updateUserData(updatedProfile, userId) async {
+    print(updatedProfile.firstName);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('firstName', updatedProfile.firstName);
+    prefs.setString('lastName', updatedProfile.lastName);
+    prefs.setString('email', updatedProfile.email);
+    prefs.setString('userId', userId);
+    prefs.setString('phoneNumber', updatedProfile.phoneNumber);
+    prefs.setString('profileUrl', updatedProfile.profileUrl);
+  }
 }

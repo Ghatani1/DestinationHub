@@ -1,18 +1,16 @@
 import 'package:destination/categories/intropages.dart';
-import 'package:destination/views/pages/admincontrol/detail.dart';
-
-import 'package:destination/views/pages/admincontrol/editplace.dart';
-import 'package:destination/views/pages/login&register/changepw.dart';
+import 'package:destination/views/admincontrol/addplace.dart';
+import 'package:destination/views/admincontrol/detail.dart';
+import 'package:destination/views/admincontrol/myplaces.dart';
+import 'package:destination/views/edit.dart/editplace.dart';
+import 'package:destination/views/edit.dart/changepw.dart';
 import 'package:destination/views/pages/login&register/loginpage.dart';
-import 'package:destination/views/pages/activities.dart';
-import 'package:destination/views/pages/admincontrol/addplace.dart';
-import 'package:destination/views/pages/bookmarks.dart';
-import 'package:destination/views/pages/direction.dart';
-import 'package:destination/views/pages/home.dart';
-import 'package:destination/views/homepage.dart';
+import 'package:destination/views/activities.dart';
+import 'package:destination/views/bookmarks.dart';
+import 'package:destination/views/direction.dart';
+import 'package:destination/views/home.dart';
+import 'package:destination/views/pages/homepage.dart';
 import 'package:destination/views/pages/login&register/registernow.dart';
-import 'package:destination/views/pages/admincontrol/myplaces.dart';
-
 import 'package:get/get.dart';
 
 var routes = [

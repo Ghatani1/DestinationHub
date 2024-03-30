@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:destination/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:readmore/readmore.dart';
 
 class CarouselSliders extends StatefulWidget {
   const CarouselSliders({super.key});
@@ -80,44 +79,79 @@ class _CarouselSlidersState extends State<CarouselSliders> {
                         },
                       ),
                     ),
-                    // Text('Showing Result for "$searchQuery"',
-                    //     style: const TextStyle(
-                    //       fontSize: 12,
-                    //       fontWeight: FontWeight.bold,
-                    //     )),
+                    Text('Showing Result for "$searchQuery"',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 255, 255, 255))),
                     StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('Recommendation')
-                            .where('name', isGreaterThanOrEqualTo: searchQuery)
-                            .snapshots(),
-                        builder: (contaxt, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: BorderSide.strokeAlignCenter,
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return const Center(
-                              child: Text('Something went wrong'),
-                            );
-                          } else {
-                            final data = snapshot.requireData;
-                            return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: data.size,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    leading: Image.network(
-                                        data.docs[index]['images'][0]),
-                                    title: Text(data.docs[index]['name']),
-                                    subtitle: ReadMoreText(
-                                        data.docs[index]['placeDescription']),
-                                  );
-                                });
-                          }
-                        }),
+                      stream: FirebaseFirestore.instance
+                          .collection('Recommendations')
+                          .where('placeName', isEqualTo: searchQuery)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: BorderSide.strokeAlignCenter,
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return const Center(
+                            child: Text('Something went wrong'),
+                          );
+                        } else {
+                          final data = snapshot.data!;
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: data.size,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Container(
+                                  height: 80,
+                                  color: kSecondary,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, '/Detail',
+                                          arguments: {
+                                            'placeName': data.docs[index]
+                                                ['placeName'],
+                                            'category': data.docs[index]
+                                                ['category'],
+                                            'images': data.docs[index]
+                                                ['images'],
+                                            'placeDescription': data.docs[index]
+                                                ['placeDescription'],
+                                            'userId': data.docs[index]['userId']
+                                          });
+                                    },
+                                    child: ListTile(
+                                      leading: Image.network(
+                                          data.docs[index]['images'][0]),
+                                      title: Text(data.docs[index]['placeName'],
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              overflow: TextOverflow.ellipsis,
+                                              color: kWhite,
+                                              fontSize: 14)),
+                                      subtitle: Text(
+                                          data.docs[index]['placeDescription'],
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              overflow: TextOverflow.ellipsis,
+                                              color: Colors.grey,
+                                              fontSize: 10)),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),

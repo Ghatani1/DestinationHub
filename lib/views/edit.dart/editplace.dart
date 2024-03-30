@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:destination/modals/recommendedModal.dart';
+import 'package:destination/services/snackbar.dart';
 import 'package:destination/utils/colors.dart';
 import 'package:destination/services/uploadingservices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +16,12 @@ class EditPlace extends StatefulWidget {
 }
 
 class _EditPlaceState extends State<EditPlace> {
+  String? _selectedCategory = 'culture';
+  String? placeId;
+  final TextEditingController _placeName = TextEditingController();
+  final TextEditingController _placeDescription = TextEditingController();
+  final List<String> _selectedImages = [];
+  final List<dynamic> _existingImages = [];
   void openCamera(ImageSource imageSource) async {
     final permissionStatus = await Permission.camera.request();
     if (permissionStatus.isPermanentlyDenied) {
@@ -30,36 +37,34 @@ class _EditPlaceState extends State<EditPlace> {
     }
   }
 
-  Future<void> _updatePlace() async {
+  void _updatePlace() async {
     List<String> updatedImageUrls = [];
-    for (final selectedImage in _selectedImages) {
-      final imageUrl =
-          await RecommendedService().uploadImageToFirebase(File(selectedImage));
-      if (imageUrl != null) {
-        updatedImageUrls.add(imageUrl);
+    if (_selectedImages.isNotEmpty) {
+      for (final eachImage in _selectedImages) {
+        final imageUrl =
+            await RecommendedService().uploadImageToFirebase(File(eachImage));
+        if (imageUrl != null) {
+          updatedImageUrls.add(imageUrl);
+        }
       }
     }
     updatedImageUrls.addAll(List<String>.from(_existingImages));
 
     final updatedPlace = RecommendModal(
-        placeName: _placeName.text,
-        category: _selectedCategory,
-        placeDescription: _placeDescription.text,
-        images: updatedImageUrls,
-        userId: FirebaseAuth.instance.currentUser!.uid);
-    await RecommendedService().updatePlace(placeId, updatedPlace).then((value) {
-      const SnackBar(content: Text('Place updated sucessfully'));
-    }).catchError((error) {
-      const SnackBar(content: Text('Error updating place'));
+      placeName: _placeName.text,
+      category: _selectedCategory,
+      placeDescription: _placeDescription.text,
+      images: updatedImageUrls,
+      userId: FirebaseAuth.instance.currentUser!.uid,
+    );
+    await RecommendedService()
+        .updatePlace(placeId, updatedPlace)
+        .then((value) => ESnackBar.showSuccess(context, 'Sucessfully Updated'))
+        .catchError((error) {
+      ESnackBar.showError(context, 'Unable To Update');
     });
   }
 
-  final TextEditingController _placeName = TextEditingController();
-  final TextEditingController _placeDescription = TextEditingController();
-  String? _selectedCategory = 'culture';
-  String? placeId;
-  final List<String> _selectedImages = [];
-  final List<dynamic> _existingImages = [];
   @override
   Widget build(BuildContext context) {
     final Map data = ModalRoute.of(context)!.settings.arguments as Map;
@@ -89,7 +94,7 @@ class _EditPlaceState extends State<EditPlace> {
                 style: TextStyle(
                     color: kSecondary,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18),
+                    fontSize: 16),
               ),
             ),
             Padding(
@@ -103,20 +108,13 @@ class _EditPlaceState extends State<EditPlace> {
                 },
                 controller: _placeName,
                 decoration: InputDecoration(
-                  labelStyle: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
                   border: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.red),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  labelText: 'Place Name',
                 ),
               ),
             ),
-            const SizedBox(height: 20),
             const Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
@@ -124,7 +122,7 @@ class _EditPlaceState extends State<EditPlace> {
                 style: TextStyle(
                     color: kSecondary,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18),
+                    fontSize: 16),
               ),
             ),
             Padding(
@@ -158,12 +156,11 @@ class _EditPlaceState extends State<EditPlace> {
                 ],
                 onChanged: (value) {
                   setState(() {
-                    _selectedCategory = value;
+                    _selectedCategory = value.toString();
                   });
                 },
               ),
             ),
-            const SizedBox(height: 10),
             const Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
@@ -171,7 +168,7 @@ class _EditPlaceState extends State<EditPlace> {
                 style: TextStyle(
                     color: kSecondary,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18),
+                    fontSize: 16),
               ),
             ),
             Padding(
@@ -237,43 +234,111 @@ class _EditPlaceState extends State<EditPlace> {
                 ? SizedBox(
                     height: 100,
                     child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _existingImages.length,
-                      itemBuilder: (context, index) {
-                        final image = _selectedImages[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: DecorationImage(
-                                    image: FileImage(File(image)),
-                                    fit: BoxFit.cover,
-                                  ),
+                        itemCount: _existingImages.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final image = _existingImages[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: Colors.grey),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(image))),
                                 ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child: IconButton(
-                                  color: kWhite,
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedImages.removeAt(index);
-                                    });
-                                  },
-                                  icon: const Icon(Icons.clear),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                                Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: IconButton(
+                                        color: Colors.white,
+                                        onPressed: () {
+                                          if (_existingImages.length > 1) {
+                                            setState(() {
+                                              _existingImages.removeAt(index);
+                                            });
+                                          }
+                                        },
+                                        icon: const Icon(Icons.close)))
+                              ],
+                            ),
+                          );
+                        }),
+                  )
+                : Container(
+                    width: double.infinity,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
                     ),
+                    child: const Center(
+                        child: Text(
+                      "No previous image",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    )),
+                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      openCamera(ImageSource.camera);
+                    },
+                    icon: const Icon(
+                      Icons.camera_alt,
+                      color: kSecondary,
+                      size: 25,
+                    )),
+                IconButton(
+                    onPressed: () {
+                      openCamera(ImageSource.gallery);
+                    },
+                    icon: const Icon(Icons.photo, size: 25, color: kSecondary))
+              ],
+            ),
+            _selectedImages.isNotEmpty
+                ? SizedBox(
+                    height: 100,
+                    child: ListView.builder(
+                        itemCount: _selectedImages.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final image = _selectedImages[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: Colors.grey),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: FileImage(File(image)))),
+                                ),
+                                Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: IconButton(
+                                        color: Colors.white,
+                                        onPressed: () {
+                                          setState(() {
+                                            _selectedImages.removeAt(index);
+                                          });
+                                        },
+                                        icon: const Icon(Icons.close)))
+                              ],
+                            ),
+                          );
+                        }),
                   )
                 : Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -282,11 +347,14 @@ class _EditPlaceState extends State<EditPlace> {
                       height: 100,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: kSecondary),
+                        border: Border.all(color: Colors.grey),
                       ),
                       child: const Center(
-                        child: Text('Please Select Image'),
-                      ),
+                          child: Text(
+                        "No image selected",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      )),
                     ),
                   ),
             Padding(

@@ -14,5 +14,3 @@ class HotelData {
       this.hotelEmail,
       this.hotelLocation});
 }
-
-enum MediaType { hotel }

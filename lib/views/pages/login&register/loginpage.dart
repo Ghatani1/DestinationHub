@@ -3,12 +3,8 @@
 import 'package:destination/utils/colors.dart';
 import 'package:destination/services/log_reg_authentication.dart';
 import 'package:destination/services/snackbar.dart';
-import 'package:destination/views/homepage.dart';
-
-import 'package:destination/views/pages/login&register/registernow.dart';
-
+import 'package:destination/views/pages/homepage.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,9 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   final _loginFormKey = GlobalKey<FormState>();
-
   bool showPass = true;
-
   void _login() async {
     try {
       bool loginSuccessful = await Authentication().login(
@@ -209,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Get.to(() => const RegisterNow());
+                            Navigator.pushNamed(context, '/Register');
                           },
                           child: const Text(
                             'Register Now',

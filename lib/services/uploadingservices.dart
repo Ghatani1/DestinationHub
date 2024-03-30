@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class RecommendedService {
@@ -35,7 +35,7 @@ class RecommendedService {
           .doc(placeId)
           .update(updatedPlace.toJson());
     } catch (e) {
-      print('Error updating place: $e');
+      ('Error updating place: $e');
     }
   }
 }

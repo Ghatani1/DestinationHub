@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-import '../controllers/nav_bar_controller.dart';
+import '../../controllers/nav_bar_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +19,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     SharedPref().getUserData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

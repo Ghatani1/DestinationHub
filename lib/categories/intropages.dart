@@ -79,7 +79,6 @@ class _IntroPagesState extends State<IntroPages> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
                               onPressed: () {
-                                // Get.to(() => const LoginPage());
                                 Navigator.pushNamed(context, '/Login');
                               },
                               child: const Text('Login'))),
@@ -99,7 +98,6 @@ class _IntroPagesState extends State<IntroPages> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
                               onPressed: () {
-                                // Get.to(() => const RegisterNow());
                                 Navigator.pushNamed(context, '/Register');
                               },
                               child: const Text('Register'))),

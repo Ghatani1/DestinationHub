@@ -2,8 +2,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:destination/modals/usersModal.dart';
 import 'package:destination/shared_preferences/SharedPref.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class Authentication {
   // Make a login function
@@ -20,7 +21,7 @@ class Authentication {
           .doc(userId)
           .get();
 
-      var decodedJson = UserModal().fromJson(result.data()!);
+      var decodedJson = UserModal.fromJson(result.data()!);
 
       SharedPref().setUserData(decodedJson, userId);
 
@@ -58,11 +59,35 @@ class Authentication {
           "lastName": lastName,
           "email": email,
           "phoneNumber": phoneNumber,
-          "password": password,
         })
         .then((value) => {isRegister = true})
         .catchError((error) => {isRegister = false});
 
     return isRegister;
+  }
+
+  Future<String?> uploadProfileToFirebase(File imageFile) async {
+    try {
+      final path = 'profile/${DateTime.now()}.png';
+      final file = File(imageFile.path);
+      final ref = firebase_storage.FirebaseStorage.instance.ref().child(path);
+      await ref.putFile(file);
+      final url = await ref.getDownloadURL();
+      return url;
+    } catch (e) {
+      print('Error Uploading image to Firebase Storage: $e');
+      return null;
+    }
+  }
+
+  Future<void> updateProfile(userId, UserModal updatedUser) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update(updatedUser.toJson());
+    } catch (e) {
+      print('Error updating profile: $e');
+    }
   }
 }

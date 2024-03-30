@@ -68,7 +68,7 @@ class _AddPlaceState extends State<AddPlace> {
   GlobalKey<FormState> addRecommendedData = GlobalKey<FormState>();
   final TextEditingController _placeName = TextEditingController();
   final TextEditingController _placeDescription = TextEditingController();
-  String? _selectedCategory = 'culture';
+  String _selectedCategory = 'culture';
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +91,7 @@ class _AddPlaceState extends State<AddPlace> {
                               style: TextStyle(
                                   color: kSecondary,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18))),
+                                  fontSize: 16))),
                       Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: TextFormField(
@@ -113,7 +113,6 @@ class _AddPlaceState extends State<AddPlace> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   labelText: 'Place Name'))),
-                      const SizedBox(height: 10),
                       const Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text('Add a category',
@@ -148,7 +147,7 @@ class _AddPlaceState extends State<AddPlace> {
                               ],
                               onChanged: (value) {
                                 setState(() {
-                                  _selectedCategory = value;
+                                  _selectedCategory = value!;
                                 });
                               })),
                       const Padding(
@@ -182,7 +181,6 @@ class _AddPlaceState extends State<AddPlace> {
                                   ),
                                   hintText: 'Location Description'),
                               maxLines: 5)),
-                      const SizedBox(height: 10),
                       Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Row(
