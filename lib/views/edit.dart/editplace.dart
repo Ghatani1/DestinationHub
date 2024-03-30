@@ -63,11 +63,37 @@ class _EditPlaceState extends State<EditPlace> {
         .catchError((error) {
       ESnackBar.showError(context, 'Unable To Update');
     });
+    // Navigator.pushNamed(context, '/HomePage');
   }
+  // final Map data = ModalRoute.of(context)!.settings.arguments as Map;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Initialize _placeName, _placeDescription, and other variables
+  //   _placeName.text = data['placeName'];
+  //   _placeDescription.text = data['placeDescription'];
+  //   _selectedCategory = data['category'];
+  //   placeId = data['id'];
+  //   if (_existingImages.isEmpty) {
+  //     _existingImages.addAll(data['images']);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     final Map data = ModalRoute.of(context)!.settings.arguments as Map;
+    // @override
+    // void initState() {
+    //   super.initState();
+    //   // Initialize _placeName, _placeDescription, and other variables
+    //   _placeName.text = data['placeName'];
+    //   _placeDescription.text = data['placeDescription'];
+    //   _selectedCategory = data['category'];
+    //   placeId = data['id'];
+    //   if (_existingImages.isEmpty) {
+    //     _existingImages.addAll(data['images']);
+    //   }
+    // }
     _placeName.text = data['placeName'];
     _placeDescription.text = data['placeDescription'];
     _selectedCategory = data['category'];

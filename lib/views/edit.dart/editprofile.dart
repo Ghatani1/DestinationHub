@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
+import 'package:destination/global_variables.dart';
 import 'package:destination/modals/usersModal.dart';
 import 'package:destination/services/log_reg_authentication.dart';
 import 'package:destination/services/snackbar.dart';
@@ -27,7 +28,28 @@ TextEditingController phonenumberController = TextEditingController();
 
 class _EditProfileState extends State<EditProfile> {
   File? img;
+  // String? profileUrl; // Add profileUrl variable
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getProfileImageUrl(); // Call method to get profile image URL
+  // }
+
+  // Future<void> getProfileImageUrl() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     profileUrl = prefs.getString('profileUrl');
+  //     // Print profileUrl to debug
+  //     print('Profile URL: $profileUrl');
+  //   });
+  // }
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   void openCamera() async {
+    if (!_formKey.currentState!.validate()) {
+      return; // Return if the form is not valid
+    }
     final permissionStatus = await Permission.camera.request();
     if (permissionStatus.isPermanentlyDenied) {
       openAppSettings();
@@ -74,7 +96,9 @@ class _EditProfileState extends State<EditProfile> {
         lastName: lastnameController.text,
         email: emailController.text,
         phoneNumber: phonenumberController.text,
-        profileUrl: uploadProfileUrl ?? "");
+        profileUrl: uploadProfileUrl ??
+            profileUrl ??
+            "https://via.placeholder.com/150");
     await Authentication()
         .updateProfile(userId, updatedProfile)
         .then((value) => {ESnackBar.showSuccess(context, 'Profile Updated')})
@@ -101,156 +125,165 @@ class _EditProfileState extends State<EditProfile> {
         backgroundColor: kPrimary,
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Stack(children: [
-                  CircleAvatar(
-                      radius: 70,
-                      backgroundImage: img != null ? FileImage(img!) : null),
-                  Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                            color: kWhite, shape: BoxShape.circle),
-                        child: IconButton(
-                            onPressed: () {
-                              openCamera();
-                            },
-                            icon: const Icon(Icons.edit)),
-                      ))
-                ]),
-              ),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: firstnameController,
-                  textCapitalization:
-                      TextCapitalization.words, // Capitalize each word
-                  inputFormatters: [
-                    FilteringTextInputFormatter
-                        .singleLineFormatter, // Ensure single line input
-                    // Custom input formatter to capitalize the first letter
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      if (newValue.text.isNotEmpty) {
-                        return TextEditingValue(
-                          text: newValue.text
-                                  .substring(0, 1)
-                                  .toUpperCase() + // Capitalize first letter
-                              newValue.text.substring(
-                                  1), // Leave remaining text unchanged
-                          selection:
-                              newValue.selection, // Maintain cursor position
-                        );
-                      }
-                      return newValue; // Return original value if empty
-                    }),
-                  ],
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(
-                      Icons.person,
-                      color: kSecondary,
-                    ),
-                    labelStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    label: const Padding(
-                      padding: EdgeInsets.only(left: 20.0),
-                      child: Text("First Name"),
-                    ),
-                    hintText: 'Jack',
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: kSecondary),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+        child: Form(
+          key: _formKey,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Stack(children: [
+                    img == null
+                        ? CircleAvatar(
+                            radius: 70,
+                            backgroundImage: NetworkImage(profileUrl == null
+                                ? 'https://via.placeholder.com/150'
+                                : profileUrl!))
+                        : CircleAvatar(
+                            radius: 50,
+                            backgroundImage:
+                                img != null ? FileImage(img!) : null,
+                          ),
+                    Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              color: kWhite, shape: BoxShape.circle),
+                          child: IconButton(
+                              onPressed: () {
+                                openCamera();
+                              },
+                              icon: const Icon(Icons.edit)),
+                        ))
+                  ]),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: lastnameController,
-                  textCapitalization:
-                      TextCapitalization.words, // Capitalize each word
-                  inputFormatters: [
-                    FilteringTextInputFormatter
-                        .singleLineFormatter, // Ensure single line input
-                    // Custom input formatter to capitalize the first letter
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      if (newValue.text.isNotEmpty) {
-                        return TextEditingValue(
-                          text: newValue.text
-                                  .substring(0, 1)
-                                  .toUpperCase() + // Capitalize first letter
-                              newValue.text.substring(
-                                  1), // Leave remaining text unchanged
-                          selection:
-                              newValue.selection, // Maintain cursor position
-                        );
-                      }
-                      return newValue; // Return original value if empty
-                    }),
-                  ],
-                  decoration: InputDecoration(
-                    prefixIcon:
-                        const Icon(Icons.person_sharp, color: kSecondary),
-                    labelStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    label: const Padding(
-                      padding: EdgeInsets.only(left: 20.0),
-                      child: Text("Last Name"),
-                    ),
-                    hintText: 'Chan',
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: kSecondary),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: emailController,
-                  validator: (value) {
-                    RegExp emailRegExp =
-                        RegExp(r'[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                    if (!emailRegExp.hasMatch(value!)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                      prefixIcon:
-                          const Icon(Icons.email_outlined, color: kSecondary),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: firstnameController,
+                    textCapitalization:
+                        TextCapitalization.words, // Capitalize each word
+                    inputFormatters: [
+                      FilteringTextInputFormatter
+                          .singleLineFormatter, // Ensure single line input
+                      // Custom input formatter to capitalize the first letter
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        if (newValue.text.isNotEmpty) {
+                          return TextEditingValue(
+                            text: newValue.text
+                                    .substring(0, 1)
+                                    .toUpperCase() + // Capitalize first letter
+                                newValue.text.substring(
+                                    1), // Leave remaining text unchanged
+                            selection:
+                                newValue.selection, // Maintain cursor position
+                          );
+                        }
+                        return newValue; // Return original value if empty
+                      }),
+                    ],
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(
+                        Icons.person,
+                        color: kSecondary,
+                      ),
                       labelStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600),
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                       label: const Padding(
                         padding: EdgeInsets.only(left: 20.0),
-                        child: Text("Email"),
+                        child: Text("First Name"),
                       ),
-                      hintText: 'abc@gmail.com',
+                      hintText: 'Jack',
                       border: OutlineInputBorder(
                         borderSide: const BorderSide(color: kSecondary),
                         borderRadius: BorderRadius.circular(12),
-                      )),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SizedBox(
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: lastnameController,
+                    textCapitalization:
+                        TextCapitalization.words, // Capitalize each word
+                    inputFormatters: [
+                      FilteringTextInputFormatter
+                          .singleLineFormatter, // Ensure single line input
+                      // Custom input formatter to capitalize the first letter
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        if (newValue.text.isNotEmpty) {
+                          return TextEditingValue(
+                            text: newValue.text
+                                    .substring(0, 1)
+                                    .toUpperCase() + // Capitalize first letter
+                                newValue.text.substring(
+                                    1), // Leave remaining text unchanged
+                            selection:
+                                newValue.selection, // Maintain cursor position
+                          );
+                        }
+                        return newValue; // Return original value if empty
+                      }),
+                    ],
+                    decoration: InputDecoration(
+                      prefixIcon:
+                          const Icon(Icons.person_sharp, color: kSecondary),
+                      labelStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      label: const Padding(
+                        padding: EdgeInsets.only(left: 20.0),
+                        child: Text("Last Name"),
+                      ),
+                      hintText: 'Chan',
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: kSecondary),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: emailController,
+                    validator: (value) {
+                      RegExp emailRegExp =
+                          RegExp(r'[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                      if (!emailRegExp.hasMatch(value!)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        prefixIcon:
+                            const Icon(Icons.email_outlined, color: kSecondary),
+                        labelStyle: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
+                        label: const Padding(
+                          padding: EdgeInsets.only(left: 20.0),
+                          child: Text("Email"),
+                        ),
+                        hintText: 'abc@gmail.com',
+                        border: OutlineInputBorder(
+                          borderSide: const BorderSide(color: kSecondary),
+                          borderRadius: BorderRadius.circular(12),
+                        )),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
                   child: TextFormField(
                     validator: (value) {
                       if (phonenumberController.text.length < 8) {
@@ -280,28 +313,28 @@ class _EditProfileState extends State<EditProfile> {
                         )),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                    height: 50,
-                    width: 250,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: kSecondary,
-                            foregroundColor: kWhite,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                            textStyle: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                        onPressed: () {
-                          updateProfile();
-                        },
-                        child: const Text('Change Profile'))),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                      height: 50,
+                      width: 250,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20)),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: kSecondary,
+                              foregroundColor: kWhite,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              textStyle: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            updateProfile();
+                          },
+                          child: const Text('Change Profile'))),
+                ),
+              ],
+            ),
           ),
         ),
       ),

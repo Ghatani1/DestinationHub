@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Center(
                 child: CircleAvatar(
                   maxRadius: 75,
-                  backgroundImage: AssetImage('images/1.jpg'),
+                  backgroundImage: AssetImage('images/DestiNAtion3.png'),
                 ),
               ),
             ),

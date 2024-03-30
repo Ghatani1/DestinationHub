@@ -63,23 +63,22 @@ class _DrawerTabState extends State<DrawerTab> {
                     color: kSecondary,
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const CircleAvatar(
-                        radius: 55,
-                        backgroundImage: AssetImage(
-                          'images/1.jpg',
-                        ),
-                      ),
+                      CircleAvatar(
+                          radius: 60,
+                          backgroundImage: NetworkImage(
+                            profileUrl == null
+                                ? 'https://via.placeholder.com/150'
+                                : profileUrl!,
+                          )),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Text(
                             'Wish You Luck!',
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold),
                             textAlign: TextAlign.left,
                           ),
@@ -87,7 +86,7 @@ class _DrawerTabState extends State<DrawerTab> {
                             "$firstName $lastName",
                             style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold),
                             textAlign: TextAlign.left,
                           ),
@@ -102,7 +101,7 @@ class _DrawerTabState extends State<DrawerTab> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.lightBlue,
+                  color: const Color.fromARGB(77, 104, 58, 183),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
@@ -138,7 +137,10 @@ class _DrawerTabState extends State<DrawerTab> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Divider(),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Container(

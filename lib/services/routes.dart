@@ -1,7 +1,4 @@
 import 'package:destination/categories/intropages.dart';
-import 'package:destination/views/admincontrol/addplace.dart';
-import 'package:destination/views/admincontrol/detail.dart';
-import 'package:destination/views/admincontrol/myplaces.dart';
 import 'package:destination/views/edit.dart/editplace.dart';
 import 'package:destination/views/edit.dart/changepw.dart';
 import 'package:destination/views/pages/login&register/loginpage.dart';
@@ -11,6 +8,9 @@ import 'package:destination/views/direction.dart';
 import 'package:destination/views/home.dart';
 import 'package:destination/views/pages/homepage.dart';
 import 'package:destination/views/pages/login&register/registernow.dart';
+import 'package:destination/views/pages/myplaces.dart';
+import 'package:destination/views/usercontrol/addplace.dart';
+import 'package:destination/views/usercontrol/placedetail.dart';
 import 'package:get/get.dart';
 
 var routes = [

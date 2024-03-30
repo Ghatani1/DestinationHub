@@ -1,7 +1,7 @@
 import 'package:destination/categories/intropages.dart';
-import 'package:destination/views/admincontrol/addplace.dart';
-import 'package:destination/views/admincontrol/detail.dart';
-import 'package:destination/views/admincontrol/myplaces.dart';
+import 'package:destination/views/usercontrol/addplace.dart';
+import 'package:destination/views/usercontrol/placedetail.dart';
+import 'package:destination/views/usercontrol/myplaces.dart';
 import 'package:destination/views/edit.dart/editprofile.dart';
 import 'package:destination/views/edit.dart/editplace.dart';
 import 'package:destination/views/edit.dart/editactivitydata.dart';

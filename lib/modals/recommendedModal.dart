@@ -17,9 +17,9 @@ class RecommendModal {
 
   Map<String, dynamic> toJson() {
     return {
-      'name': placeName,
+      'placeName': placeName,
       'category': category,
-      'description': placeDescription,
+      'placeDescription': placeDescription,
       'images': images,
       'userId': userId,
     };

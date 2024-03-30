@@ -1,5 +1,5 @@
 import 'package:destination/views/activities.dart';
-import 'package:destination/views/admincontrol/addplace.dart';
+import 'package:destination/views/usercontrol/addplace.dart';
 import 'package:destination/views/bookmarks.dart';
 
 // import 'package:destination/views/pages/bookmarks.dart';

@@ -31,7 +31,7 @@ class UserModal {
       lastName: json['lastName'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
-      profileUrl: json['profileUrl'],
+      profileUrl: json['profileUrl'] ?? "https://via.placeholder.com/150",
     );
   }
 }

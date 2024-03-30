@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:destination/utils/colors.dart';
 import 'package:destination/views/pages/drawer.dart';
-import 'package:destination/views/admincontrol/placedata.dart';
+import 'package:destination/views/usercontrol/placedata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../controllers/carousel_controller.dart';

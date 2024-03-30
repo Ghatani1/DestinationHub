@@ -5,7 +5,7 @@ import 'package:destination/firebase_options.dart';
 import 'package:destination/utils/colors.dart';
 import 'package:destination/services/log_reg_authentication.dart';
 import 'package:destination/shared_preferences/SharedPref.dart';
-import 'package:destination/services/routes.dart';
+import 'package:destination/utils/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
