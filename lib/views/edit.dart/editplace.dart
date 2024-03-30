@@ -137,9 +137,7 @@ class _EditPlaceState extends State<EditPlace> {
                 items: const [
                   DropdownMenuItem(
                     value: 'culture',
-                    child: Text(
-                      "Culture",
-                    ),
+                    child: Text("Culture"),
                   ),
                   DropdownMenuItem(
                     value: 'mountains',
@@ -155,6 +153,7 @@ class _EditPlaceState extends State<EditPlace> {
                   ),
                 ],
                 onChanged: (value) {
+                  print('Selected category: $value');
                   setState(() {
                     _selectedCategory = value.toString();
                   });

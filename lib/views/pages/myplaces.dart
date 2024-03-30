@@ -57,7 +57,7 @@ class _MyPlacesState extends State<MyPlaces> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        backgroundColor: kPrimary,
+        backgroundColor: Colors.red,
         elevation: 0,
       ),
       body: FutureBuilder(
@@ -65,13 +65,13 @@ class _MyPlacesState extends State<MyPlaces> {
             .collection('Recommendations')
             .where('userId', isEqualTo: userId)
             .get(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No Data Available'));
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Failed to load data'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('No data found'));
           } else {
             final data = snapshot.data!.docs;
 
@@ -81,25 +81,17 @@ class _MyPlacesState extends State<MyPlaces> {
                 return ListTile(
                   leading: Image.network(
                     data[index]['images'][0],
-                    fit: BoxFit.cover,
+                    width: 100,
                   ),
-                  title: Text(
-                    data[index]['placeName'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  subtitle: Text(
-                    data[index]['category'],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  title: Text(data[index]['placeName']),
+                  subtitle: Text(data[index]['category'],
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/edit_product',
+                          Navigator.pushNamed(context, '/EditPlaces',
                               arguments: {
                                 "id": data[index].id,
                                 "placeName": data[index]['placeName'],
@@ -121,7 +113,7 @@ class _MyPlacesState extends State<MyPlaces> {
                         },
                         icon: const Icon(
                           Icons.delete,
-                          color: Colors.red,
+                          color: Colors.blue,
                         ),
                       ),
                     ],
