@@ -52,9 +52,9 @@ class _HomePageState extends State<HomePage> {
                 },
                 tabs: const [
                   GButton(icon: Icons.home, text: 'Home'),
-                  GButton(icon: Icons.event_available, text: 'Activities'),
-                  GButton(icon: Icons.map_outlined, text: 'Direction'),
-                  GButton(icon: Icons.bookmark_add, text: 'BookMarks'),
+                  GButton(icon: Icons.event_available, text: 'Reminder'),
+                  GButton(icon: Icons.map_outlined, text: 'Map'),
+                  GButton(icon: Icons.sunny, text: 'Weather'),
                 ],
               ),
             ),

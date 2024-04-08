@@ -27,24 +27,23 @@ TextEditingController emailController = TextEditingController();
 TextEditingController phonenumberController = TextEditingController();
 
 class _EditProfileState extends State<EditProfile> {
-  File? img;
   // String? profileUrl; // Add profileUrl variable
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getProfileImageUrl(); // Call method to get profile image URL
-  // }
+    // @override
+    // void initState() {
+    //   super.initState();
+    //   getProfileImageUrl(); // Call method to get profile image URL
+    // }
 
-  // Future<void> getProfileImageUrl() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     profileUrl = prefs.getString('profileUrl');
-  //     // Print profileUrl to debug
-  //     print('Profile URL: $profileUrl');
-  //   });
-  // }
-
+    // Future<void> getProfileImageUrl() async {
+    //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   setState(() {
+    //     profileUrl = prefs.getString('profileUrl');
+    //     // Print profileUrl to debug
+    //     print('Profile URL: $profileUrl');
+    //   });
+    // }
+  File? img;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   void openCamera() async {
     if (!_formKey.currentState!.validate()) {
@@ -101,14 +100,17 @@ class _EditProfileState extends State<EditProfile> {
             "https://via.placeholder.com/150");
     await Authentication()
         .updateProfile(userId, updatedProfile)
-        .then((value) => {ESnackBar.showSuccess(context, 'Profile Updated')})
+        .then((value) async {
+      SharedPref().updateUserData(updatedProfile);
+      SharedPref().getUserData();
+      Navigator.pushNamed(context, '/HomePage');
+      ESnackBar.showSuccess(context, 'Profile Updated');
+    })
         // ignore: body_might_complete_normally_catch_error
         .catchError((error) {
       ESnackBar.showError(context, error.toString());
     });
-    SharedPref().updateUserData(updatedProfile, userId);
-    SharedPref().getUserData();
-    Navigator.pushNamed(context, '/Home');
+
     firstnameController.clear();
     lastnameController.clear();
     emailController.clear();

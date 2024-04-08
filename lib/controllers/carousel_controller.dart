@@ -86,7 +86,7 @@ class _CarouselSlidersState extends State<CarouselSliders> {
                             color: Color.fromARGB(255, 255, 255, 255))),
                     StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
-                          .collection('Recommendations')
+                          .collection('places')
                           .where('placeName', isEqualTo: searchQuery)
                           .snapshots(),
                       builder: (context, snapshot) {

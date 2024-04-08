@@ -4,11 +4,11 @@ import 'package:destination/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ActivityData extends StatefulWidget {
-  const ActivityData({super.key});
+class EditReminder extends StatefulWidget {
+  const EditReminder({super.key});
 
   @override
-  State<ActivityData> createState() => _ActivityDataState();
+  State<EditReminder> createState() => _ActivityDataState();
 }
 
 final TextEditingController _name = TextEditingController();
@@ -25,7 +25,7 @@ void deleteData(String documentId) async {
       .delete();
 }
 
-class _ActivityDataState extends State<ActivityData> {
+class _ActivityDataState extends State<EditReminder> {
   late String eventName = "";
   late String eventPlace = "";
   late String eventDate = "";

@@ -1,4 +1,5 @@
 import 'package:destination/categories/buildpage.dart';
+import 'package:destination/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -58,7 +59,7 @@ class _IntroPagesState extends State<IntroPages> {
         ),
         bottomSheet: islastPage
             ? Container(
-                color: Colors.white,
+                color: kWhite,
                 height: 170,
                 child: Align(
                   alignment: Alignment.center,
@@ -73,8 +74,8 @@ class _IntroPagesState extends State<IntroPages> {
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12)),
-                                  backgroundColor: Colors.red,
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: kSecondary,
+                                  foregroundColor: kWhite,
                                   textStyle: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
@@ -92,8 +93,8 @@ class _IntroPagesState extends State<IntroPages> {
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12)),
-                                  backgroundColor: Colors.red,
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: kSecondary,
+                                  foregroundColor: kWhite,
                                   textStyle: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
@@ -106,7 +107,7 @@ class _IntroPagesState extends State<IntroPages> {
                 ),
               )
             : Container(
-                decoration: const BoxDecoration(color: Colors.white),
+                decoration: const BoxDecoration(color: kWhite),
                 height: 150,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -124,7 +125,7 @@ class _IntroPagesState extends State<IntroPages> {
                           paintStyle: PaintingStyle.stroke,
                           strokeWidth: 1.5,
                           dotColor: Colors.blueGrey,
-                          activeDotColor: Colors.redAccent,
+                          activeDotColor: kPrimary,
                         ),
                         onDotClicked: (index) => controller.animateToPage(index,
                             duration: const Duration(milliseconds: 500),
@@ -158,7 +159,7 @@ class _IntroPagesState extends State<IntroPages> {
                             },
                             icon: const Icon(Icons.arrow_circle_right),
                             iconSize: 50,
-                            color: Colors.red,
+                            color: kSecondary,
                           )
                         ],
                       ),

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:destination/utils/colors.dart';
 import 'package:destination/views/pages/drawer.dart';
-import 'package:destination/views/usercontrol/placedata.dart';
+import 'package:destination/views/screens/placedata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../controllers/carousel_controller.dart';
+import '../../controllers/carousel_controller.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -29,11 +29,12 @@ class _HomeState extends State<Home> {
     return Scaffold(
       key: _drawer,
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: kPrimary,
         elevation: 0,
         title: const Text(
           "Home",
-          style: TextStyle(color: kWhite, fontWeight: FontWeight.w700),
+          style: TextStyle(color: kWhite, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: const Icon(Icons.menu, color: kWhite),
@@ -48,13 +49,18 @@ class _HomeState extends State<Home> {
         child: Column(
           children: [
             const CarouselSliders(),
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text('Mostly Recommended',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black)),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Mostly Recommended',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -88,11 +94,9 @@ class _HomeState extends State<Home> {
             ),
             FutureBuilder<QuerySnapshot>(
               future: _selectedCategory == "all"
-                  ? FirebaseFirestore.instance
-                      .collection('Recommendations')
-                      .get()
+                  ? FirebaseFirestore.instance.collection('places').get()
                   : FirebaseFirestore.instance
-                      .collection('Recommendations')
+                      .collection('places')
                       .where('category', isEqualTo: _selectedCategory)
                       .get(),
               builder: (context, snapshot) {
@@ -116,7 +120,6 @@ class _HomeState extends State<Home> {
                       return GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(context, '/Detail', arguments: {
-                            'id': data[index].id,
                             'placeName': data[index]['placeName'],
                             'category': data[index]['category'],
                             'images': data[index]['images'],

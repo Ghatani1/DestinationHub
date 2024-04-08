@@ -11,6 +11,7 @@ class SharedPref {
     prefs.setString('email', data.email);
     prefs.setString('phoneNumber', data.phoneNumber);
     prefs.setString('userId', userId);
+    prefs.setString('profileUrl', data.profileUrl);
   }
 
   Future<void> getUserData() async {
@@ -20,6 +21,7 @@ class SharedPref {
     email = prefs.getString('email');
     phoneNumber = prefs.getString('phoneNumber');
     userId = prefs.getString('userId');
+    profileUrl = prefs.getString('profileUrl');
   }
 
   Future<void> removeUserData() async {
@@ -29,15 +31,15 @@ class SharedPref {
     prefs.remove('email');
     prefs.remove('phoneNumber');
     prefs.remove('userId');
+    prefs.remove('profileUrl');
   }
 
-  Future<void> updateUserData(updatedProfile, userId) async {
+  Future<void> updateUserData(updatedProfile) async {
     print(updatedProfile.firstName);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('firstName', updatedProfile.firstName);
     prefs.setString('lastName', updatedProfile.lastName);
     prefs.setString('email', updatedProfile.email);
-    prefs.setString('userId', userId);
     prefs.setString('phoneNumber', updatedProfile.phoneNumber);
     prefs.setString('profileUrl', updatedProfile.profileUrl);
   }

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:destination/modals/recommendedModal.dart';
+import 'package:destination/modals/placemodal.dart';
 import 'package:destination/services/snackbar.dart';
 import 'package:destination/utils/colors.dart';
 import 'package:destination/services/uploadingservices.dart';
@@ -17,23 +17,28 @@ class EditPlace extends StatefulWidget {
 
 class _EditPlaceState extends State<EditPlace> {
   String? _selectedCategory = 'culture';
+  final List<String> _categories = [
+    'culture',
+    'mountains',
+    'heritages',
+    'flora/fauna'
+  ];
   String? placeId;
   final TextEditingController _placeName = TextEditingController();
   final TextEditingController _placeDescription = TextEditingController();
   final List<String> _selectedImages = [];
   final List<dynamic> _existingImages = [];
-  void openCamera(ImageSource imageSource) async {
+  final _fromKey = GlobalKey<FormState>();
+  void openCamera(ImageSource source) async {
     final permissionStatus = await Permission.camera.request();
     if (permissionStatus.isPermanentlyDenied) {
       openAppSettings();
     }
-    final image = await ImagePicker().pickImage(source: imageSource);
+    final image = await ImagePicker().pickImage(source: source);
     if (image != null) {
       setState(() {
         _selectedImages.add(image.path);
       });
-    } else {
-      return;
     }
   }
 
@@ -50,7 +55,7 @@ class _EditPlaceState extends State<EditPlace> {
     }
     updatedImageUrls.addAll(List<String>.from(_existingImages));
 
-    final updatedPlace = RecommendModal(
+    final place = PlaceModal(
       placeName: _placeName.text,
       category: _selectedCategory,
       placeDescription: _placeDescription.text,
@@ -58,46 +63,22 @@ class _EditPlaceState extends State<EditPlace> {
       userId: FirebaseAuth.instance.currentUser!.uid,
     );
     await RecommendedService()
-        .updatePlace(placeId, updatedPlace)
+        .updatePlace(place)
         .then((value) => ESnackBar.showSuccess(context, 'Sucessfully Updated'))
         .catchError((error) {
       ESnackBar.showError(context, 'Unable To Update');
     });
-    // Navigator.pushNamed(context, '/HomePage');
+    Navigator.pushNamed(context, '/HomePage');
   }
-  // final Map data = ModalRoute.of(context)!.settings.arguments as Map;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // Initialize _placeName, _placeDescription, and other variables
-  //   _placeName.text = data['placeName'];
-  //   _placeDescription.text = data['placeDescription'];
-  //   _selectedCategory = data['category'];
-  //   placeId = data['id'];
-  //   if (_existingImages.isEmpty) {
-  //     _existingImages.addAll(data['images']);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
     final Map data = ModalRoute.of(context)!.settings.arguments as Map;
-    // @override
-    // void initState() {
-    //   super.initState();
-    //   // Initialize _placeName, _placeDescription, and other variables
-    //   _placeName.text = data['placeName'];
-    //   _placeDescription.text = data['placeDescription'];
-    //   _selectedCategory = data['category'];
-    //   placeId = data['id'];
-    //   if (_existingImages.isEmpty) {
-    //     _existingImages.addAll(data['images']);
-    //   }
-    // }
+    // _selectedCategory ??= data['category'] as String?;
+
     _placeName.text = data['placeName'];
     _placeDescription.text = data['placeDescription'];
-    _selectedCategory = data['category'];
-    placeId = data['id'];
+
     if (_existingImages.isEmpty) {
       _existingImages.addAll(data['images']);
     }
@@ -110,264 +91,236 @@ class _EditPlaceState extends State<EditPlace> {
         backgroundColor: kPrimary,
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                'Place Name',
-                style: TextStyle(
-                    color: kSecondary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: TextFormField(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a place name';
-                  }
-                  return null;
-                },
-                controller: _placeName,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.red),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+        child: Form(
+          key: _fromKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  'Place Name',
+                  style: TextStyle(
+                      color: kSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                'Add a category',
-                style: TextStyle(
-                    color: kSecondary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: DropdownButton(
-                borderRadius: BorderRadius.circular(10),
-                iconEnabledColor: kSecondary,
-                icon: const Icon(Icons.category),
-                value: _selectedCategory,
-                isExpanded: true,
-                hint: const Text('Select Category'),
-                items: const [
-                  DropdownMenuItem(
-                    value: 'culture',
-                    child: Text("Culture"),
-                  ),
-                  DropdownMenuItem(
-                    value: 'mountains',
-                    child: Text("Mountains"),
-                  ),
-                  DropdownMenuItem(
-                    value: 'heritages',
-                    child: Text("Heritages"),
-                  ),
-                  DropdownMenuItem(
-                    value: 'flora/fauna',
-                    child: Text("Flora/Fauna"),
-                  ),
-                ],
-                onChanged: (value) {
-                  print('Selected category: $value');
-                  setState(() {
-                    _selectedCategory = value.toString();
-                  });
-                },
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                'Location Description',
-                style: TextStyle(
-                    color: kSecondary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: TextFormField(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a location description';
-                  }
-                  return null;
-                },
-                controller: _placeDescription,
-                decoration: InputDecoration(
-                    labelStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: TextFormField(
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a place name';
+                    }
+                    return null;
+                  },
+                  controller: _placeName,
+                  decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.red),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    hintText: 'Location Description'),
-                maxLines: 5,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Add destination images',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
-                  Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            openCamera(ImageSource.camera);
-                          },
-                          icon: const Icon(
-                            Icons.camera_alt,
-                            color: kSecondary,
-                            size: 25,
-                          )),
-                      IconButton(
-                          onPressed: () {
-                            openCamera(ImageSource.gallery);
-                          },
-                          icon: const Icon(Icons.photo,
-                              size: 25, color: kSecondary))
-                    ],
-                  )
-                ],
+                ),
               ),
-            ),
-            _existingImages.isNotEmpty
-                ? SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                        itemCount: _existingImages.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          final image = _existingImages[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Colors.grey),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(image))),
-                                ),
-                                Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: IconButton(
-                                        color: Colors.white,
-                                        onPressed: () {
-                                          if (_existingImages.length > 1) {
-                                            setState(() {
-                                              _existingImages.removeAt(index);
-                                            });
-                                          }
-                                        },
-                                        icon: const Icon(Icons.close)))
-                              ],
-                            ),
-                          );
-                        }),
-                  )
-                : Container(
-                    width: double.infinity,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: const Center(
-                        child: Text(
-                      "No previous image",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    )),
-                  ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      openCamera(ImageSource.camera);
-                    },
-                    icon: const Icon(
-                      Icons.camera_alt,
+              const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  'Add a category',
+                  style: TextStyle(
                       color: kSecondary,
-                      size: 25,
-                    )),
-                IconButton(
-                    onPressed: () {
-                      openCamera(ImageSource.gallery);
-                    },
-                    icon: const Icon(Icons.photo, size: 25, color: kSecondary))
-              ],
-            ),
-            _selectedImages.isNotEmpty
-                ? SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                        itemCount: _selectedImages.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          final image = _selectedImages[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Colors.grey),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: FileImage(File(image)))),
-                                ),
-                                Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: IconButton(
-                                        color: Colors.white,
-                                        onPressed: () {
-                                          setState(() {
-                                            _selectedImages.removeAt(index);
-                                          });
-                                        },
-                                        icon: const Icon(Icons.close)))
-                              ],
-                            ),
-                          );
-                        }),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: DropdownButton(
+                  value: _selectedCategory,
+                  borderRadius: BorderRadius.circular(10),
+                  iconEnabledColor: kSecondary,
+                  icon: const Icon(Icons.category),
+                  isExpanded: true,
+                  hint: const Text('Select Category'),
+                  items: _categories.map((String category) {
+                    return DropdownMenuItem<String>(
+                      value: category,
+                      child: Text(category),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+                  },
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  'Location Description',
+                  style: TextStyle(
+                      color: kSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: TextFormField(
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a location description';
+                    }
+                    return null;
+                  },
+                  controller: _placeDescription,
+                  decoration: InputDecoration(
+                      labelStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      hintText: 'Location Description'),
+                  maxLines: 5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Add destination images',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _existingImages.isNotEmpty
+                  ? SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                          itemCount: _existingImages.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            final image = _existingImages[index];
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: Colors.grey),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(image))),
+                                  ),
+                                  Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: IconButton(
+                                          color: Colors.white,
+                                          onPressed: () {
+                                            if (_existingImages.length > 1) {
+                                              setState(() {
+                                                _existingImages.removeAt(index);
+                                              });
+                                            }
+                                          },
+                                          icon: const Icon(Icons.close)))
+                                ],
+                              ),
+                            );
+                          }),
+                    )
+                  : Container(
+                      width: double.infinity,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: const Center(
+                          child: Text(
+                        "No previous image",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      )),
+                    ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          openCamera(ImageSource.camera);
+                        },
+                        icon: const Icon(
+                          Icons.camera_alt,
+                          color: kSecondary,
+                          size: 25,
+                        )),
+                    IconButton(
+                        onPressed: () {
+                          openCamera(ImageSource.gallery);
+                        },
+                        icon: const Icon(Icons.photo,
+                            size: 25, color: kSecondary))
+                  ],
+                ),
+              ),
+              _selectedImages.isNotEmpty
+                  ? SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                          itemCount: _selectedImages.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            final image = _selectedImages[index];
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: Colors.grey),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: FileImage(File(image)))),
+                                  ),
+                                  Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: IconButton(
+                                          color: Colors.white,
+                                          onPressed: () {
+                                            setState(() {
+                                              _selectedImages.removeAt(index);
+                                            });
+                                          },
+                                          icon: const Icon(Icons.close)))
+                                ],
+                              ),
+                            );
+                          }),
+                    )
+                  : Container(
                       width: double.infinity,
                       height: 100,
                       decoration: BoxDecoration(
@@ -381,21 +334,21 @@ class _EditPlaceState extends State<EditPlace> {
                             fontSize: 16, fontWeight: FontWeight.w600),
                       )),
                     ),
-                  ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text('${_existingImages.length} selceted image'),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text('${_existingImages.length} selceted image'),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            _updatePlace();
-          },
-          label: const Text('Update Place'),
-          icon: const Icon(Icons.add)),
+        onPressed: () {
+          _updatePlace();
+        },
+        label: const Text('Edit Place'),
+        icon: const Icon(Icons.place_sharp),
+      ),
     );
   }
 }

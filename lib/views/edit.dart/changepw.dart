@@ -2,7 +2,7 @@
 
 import 'package:destination/utils/colors.dart';
 import 'package:destination/services/snackbar.dart';
-import 'package:destination/views/pages/login&register/registernow.dart';
+import 'package:destination/views/login&register/registernow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

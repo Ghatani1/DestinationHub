@@ -12,7 +12,7 @@ class ESnackBar {
   static void showError(context, message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('$message'),
-      backgroundColor: kPrimary,
+      backgroundColor: Colors.red,
     ));
   }
 }

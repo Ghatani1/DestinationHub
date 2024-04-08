@@ -67,17 +67,18 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: ListView(
         children: [
-          const SizedBox(height: 60),
-          const Align(
-            alignment: Alignment.center,
-            child: SizedBox(
-              height: 150,
-              width: 200,
-              child: Center(
-                child: CircleAvatar(
-                  maxRadius: 75,
-                  backgroundImage: AssetImage('images/DestiNAtion3.png'),
-                ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                width: 180,
+                height: 180,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage('assets/logo1.png'),
+                      fit: BoxFit.fill,
+                    )),
               ),
             ),
           ),

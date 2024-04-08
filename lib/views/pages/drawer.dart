@@ -1,10 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:destination/global_variables.dart';
+import 'package:destination/services/log_reg_authentication.dart';
 
 import 'package:destination/utils/colors.dart';
-import 'package:destination/shared_preferences/SharedPref.dart';
 import 'package:destination/views/pages/profile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,77 +16,84 @@ class DrawerTab extends StatefulWidget {
 
 class _DrawerTabState extends State<DrawerTab> {
   void _logOut() async {
-    showDialog(
+    try {
+      showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Log Out'),
-            content: const Text('Are you sure you want to log out'),
+            content: const Text('Are you sure you want to log out?'),
             actions: [
               TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Cancel')),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
+              ),
               TextButton(
                 onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  SharedPref().removeUserData();
+                  await Authentication().signOut();
                   Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/Login', // Replace with your login route
-                    (route) => false, // Remove all routes in the stack
-                  );
+                      context, '/Login', (route) => false);
                 },
                 child: const Text('Log Out'),
               )
             ],
           );
-        });
+        },
+      );
+    } catch (e) {
+      print('Error logging out: $e');
+      // Handle error (e.g., display error message to user)
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Drawer(
+        backgroundColor: kPrimary,
         width: 300,
         child: ListView(
           children: [
-            SizedBox(
+            Container(
               height: 150,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: DrawerHeader(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: kSecondary,
-                  ),
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: kPrimary,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
                   child: Row(
                     children: [
                       CircleAvatar(
-                          radius: 60,
+                          radius: 40,
                           backgroundImage: NetworkImage(
                             profileUrl == null
-                                ? 'https://via.placeholder.com/150'
+                                ? 'images/DestiNation2.jpg'
                                 : profileUrl!,
                           )),
+                      SizedBox(width: 20),
                       Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          const Text(
-                            'Wish You Luck!',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.left,
-                          ),
                           Text(
                             "$firstName $lastName",
                             style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                              color: kWhite,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                          const Text(
+                            'Wish You Luck!',
+                            style: TextStyle(
+                              color: kWhite,
+                              fontSize: 16,
+                            ),
                             textAlign: TextAlign.left,
                           ),
                         ],
@@ -98,42 +104,160 @@ class _DrawerTabState extends State<DrawerTab> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(77, 104, 58, 183),
+                  color: kWhite,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(
+                        Icons.dashboard_customize_outlined,
+                        color: kPrimary,
+                      ),
+                      title: const Text(
+                        'Add Data',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      onTap: () {
+                        Get.toNamed('/AddButton');
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.favorite_border),
+                      iconColor: kPrimary,
+                      title: const Text(
+                        'Favourite List',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      onTap: () {
+                        Get.toNamed('/FavouriteList');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12), color: kWhite),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: kWhite,
+                            borderRadius: BorderRadius.circular(10)),
                         child: ListTile(
                           leading: const Icon(Icons.person),
                           title: const Text('Profile',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          iconColor: kSecondary,
+                              style: TextStyle(
+                                  color: kSecondary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14)),
+                          iconColor: kPrimary,
                           onTap: () {
                             Get.to(() => const Profile());
                           },
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: kWhite,
+                            borderRadius: BorderRadius.circular(10)),
                         child: ListTile(
-                          leading: const Icon(Icons.place),
+                          leading: const Icon(Icons.place, color: kPrimary),
                           iconColor: kSecondary,
-                          title: const Text('My Places',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          title: const Text('Added Places',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: kSecondary)),
                           onTap: () {
                             Get.toNamed('/MyPlaces');
                           },
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: kWhite,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.home,
+                            color: kPrimary,
+                          ),
+                          iconColor: kSecondary,
+                          title: const Text('Added Hotels',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: kSecondary)),
+                          onTap: () {
+                            Get.toNamed('/MyHotels');
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: kWhite,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.fastfood,
+                            color: kPrimary,
+                          ),
+                          iconColor: kSecondary,
+                          title: const Text('Added Dishes',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: kSecondary)),
+                          onTap: () {
+                            Get.toNamed('/MyDish');
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(9.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: kWhite,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.emoji_events,
+                            color: kPrimary,
+                          ),
+                          iconColor: kSecondary,
+                          title: const Text('Added Activities',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: kPrimary)),
+                          onTap: () {
+                            Get.toNamed('/MyActivities');
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -145,20 +269,19 @@ class _DrawerTabState extends State<DrawerTab> {
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: kWhite,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.logout),
-                      iconColor: Colors.red,
-                      title: const Text('Log Out'),
-                      onTap: () {
-                        _logOut();
-                      },
-                    ),
-                  ],
+                child: ListTile(
+                  leading: const Icon(Icons.logout),
+                  iconColor: Colors.red,
+                  title: const Text(
+                    'Log Out',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    _logOut();
+                  },
                 ),
               ),
             ),

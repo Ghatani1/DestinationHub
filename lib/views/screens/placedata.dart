@@ -3,8 +3,8 @@ import 'package:destination/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class PlaceData extends StatefulWidget {
-  final String placeName;
-  final String category;
+  final String? placeName;
+  final String? category;
   final String? image;
   const PlaceData({
     super.key,
@@ -27,22 +27,18 @@ class _PlaceDataState extends State<PlaceData> {
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Image.network(widget.image!,
-                  height: 100, width: double.infinity, fit: BoxFit.cover),
+                  height: 120, width: double.infinity, fit: BoxFit.cover),
             ),
-            Text(widget.placeName,
+            const SizedBox(height: 20),
+            Text(widget.placeName!,
                 style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            const Text('Location',
-                style: TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.bold, color: kPrimary))
+                    color: Colors.black))
           ],
         ),
       ),

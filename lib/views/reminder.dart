@@ -2,6 +2,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:destination/global_variables.dart';
 import 'package:destination/modals/calendarevent.dart';
 import 'package:destination/controllers/notification_controller.dart';
 import 'package:destination/services/snackbar.dart';
@@ -13,14 +14,14 @@ import 'package:get/get.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:table_calendar/table_calendar.dart';
 
-class Activities extends StatefulWidget {
-  const Activities({super.key});
+class Reminder extends StatefulWidget {
+  const Reminder({super.key});
 
   @override
-  State<Activities> createState() => _ActivitiesState();
+  State<Reminder> createState() => _ActivitiesState();
 }
 
-class _ActivitiesState extends State<Activities> {
+class _ActivitiesState extends State<Reminder> {
   late String eventName = "";
   late String eventPlace = "";
   late String eventDate = "";
@@ -53,7 +54,8 @@ class _ActivitiesState extends State<Activities> {
     eventDescription = description;
   }
 
-  createData() {
+  createData(String userId, user) {
+    // Use the userId parameter to associate the event with the user
     DateTime? dateVal = dateSub.value;
     String formattedTime = _time.text;
     if (eventName.isNotEmpty &&
@@ -61,8 +63,11 @@ class _ActivitiesState extends State<Activities> {
         dateVal != null &&
         formattedTime.isNotEmpty &&
         eventDescription.isNotEmpty) {
-      DocumentReference documentReference =
-          FirebaseFirestore.instance.collection("MyActivities").doc(eventName);
+      DocumentReference documentReference = FirebaseFirestore.instance
+          .collection("MyActivities")
+          .doc(userId) // Use userId to associate the event with the user
+          .collection("Events") // Create a subcollection for events
+          .doc(eventName);
       Map<String, dynamic> activity = {
         "eventName": eventName,
         "eventPlace": eventPlace,
@@ -223,11 +228,11 @@ class _ActivitiesState extends State<Activities> {
                         fontSize: 10,
                         color: kWhite,
                         fontWeight: FontWeight.bold))),
-                position: BadgePosition.topEnd(top: 0, end: 0),
+                position: BadgePosition.topEnd(top: 0, end: 5),
                 badgeAnimation: const badges.BadgeAnimation.rotation(
                   animationDuration: Duration(milliseconds: 1),
                   colorChangeAnimationDuration: Duration(seconds: 1),
-                  loopAnimation: false,
+                  loopAnimation: true,
                   curve: Curves.fastOutSlowIn,
                   colorChangeAnimationCurve: Curves.bounceInOut,
                 ),
@@ -241,7 +246,7 @@ class _ActivitiesState extends State<Activities> {
                 child: IconButton(
                   onPressed: () {
                     _notificationController.updateNotificationCount(0);
-                    Navigator.pushNamed(context, '/ActivityData');
+                    Get.toNamed('/EditReminder');
                   },
                   icon: const Icon(Icons.edit_document, color: Colors.white),
                 ),
@@ -250,14 +255,14 @@ class _ActivitiesState extends State<Activities> {
           ],
           backgroundColor: kPrimary,
           centerTitle: true,
-          title: const Text('Activities',
+          title: const Text('Reminder',
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.w700))),
-      body: activities(),
+      body: Reminder(),
     );
   }
 
-  Widget activities() {
+  Widget Reminder() {
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       TableCalendar(
@@ -542,7 +547,7 @@ class _ActivitiesState extends State<Activities> {
                     scheduleNotification(
                         eventName, eventDescription, dateSub.value!);
                   }
-                  String message = createData();
+                  String message = createData('id', userId);
                   if (message == "Event has been added to list") {
                     ESnackBar.showSuccess(context, message);
                   } else {

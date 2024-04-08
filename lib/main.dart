@@ -58,5 +58,8 @@ void main() async {
         // '/EditPlace',
         user != null ? '/HomePage' : '/IntroPages',
     getPages: routes,
+    theme: ThemeData(
+      scaffoldBackgroundColor: Colors.white, // Set background color here
+    ),
   ));
 }

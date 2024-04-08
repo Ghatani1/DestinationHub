@@ -42,6 +42,12 @@ class Authentication {
     return user;
   }
 
+  Future<void> signOut() async {
+    var auth = FirebaseAuth.instance;
+    await auth.signOut();
+    await SharedPref().removeUserData();
+  }
+
   Future<bool> register(String firstName, String lastName, String email,
       String password, String phoneNumber) async {
     bool isRegister = false;
@@ -80,12 +86,12 @@ class Authentication {
     }
   }
 
-  Future<void> updateProfile(userId, UserModal updatedUser) async {
+  Future<void> updateProfile(userId, UserModal user) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
-          .update(updatedUser.toJson());
+          .update(user.toJson());
     } catch (e) {
       print('Error updating profile: $e');
     }
